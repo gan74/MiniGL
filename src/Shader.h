@@ -39,6 +39,7 @@ class Shader : NonCopyable {
 		~Shader();
 
 		void bind() const;
+		void dispatch(const math::Vec3ui& size) const;
 
 		void set_uniform(const char* name, const math::Matrix4<>& value);
 		void set_uniform(const char* name, const math::Vec3& value);
@@ -46,6 +47,7 @@ class Shader : NonCopyable {
 
 
 		void set_texture(const core::String& name, const Texture& tex);
+		void set_image(const core::String& name, const Texture& image);
 
 	private:
 		i32 location(const char* name) const;

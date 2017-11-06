@@ -54,7 +54,9 @@ void initialize_gl() {
 			fatal("Unable to initialize glew.");
 		}
 		glDebugMessageCallback(&debug_out, 0);
+
 		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
 		glEnable(GL_DEPTH_TEST);
 

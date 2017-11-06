@@ -79,7 +79,7 @@ static std::unordered_map<core::String, i32> fetch_textures(u32 handle) {
 		GLenum type = GL_NONE;
 		glGetActiveUniform(handle, i, sizeof(name), &len, &discard, &type, name);
 
-		if(type == GL_SAMPLER_2D || type == GL_SAMPLER_CUBE) {
+		if(type == GL_SAMPLER_2D || type == GL_SAMPLER_CUBE || type == GL_IMAGE_2D) {
 			textures[name] = slots;
 			glProgramUniform1i(handle, glGetUniformLocation(handle, name), slots++);
 		}
@@ -141,6 +141,14 @@ void Shader::bind() const {
 	glUseProgram(_handle);
 }
 
+void Shader::dispatch(const math::Vec3ui& size) const {
+	bind();
+	// TODO: change this (maybe?)
+	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	glDispatchCompute(size.x(), size.y(), size.z());
+	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+}
+
 i32 Shader::location(const char* name) const {
 	return glGetUniformLocation(_handle, name);
 }
@@ -162,5 +170,15 @@ void Shader::set_texture(const core::String& name, const Texture& tex) {
 	if(it != _textures.end()) {
 		glActiveTexture(GL_TEXTURE0 + it->second);
 		glBindTexture(tex.type(), tex.handle());
+	}
+}
+
+void Shader::set_image(const core::String& name, const Texture& tex) {
+	auto it = _textures.find(name);
+	if(it != _textures.end()) {
+		auto access = GL_READ_WRITE;
+		glBindImageTexture(it->second, tex.handle(), 0, false, 0, access, GL_RGBA8);
+	} else {
+		log_msg("\"" + name + "\" is not a valid uniform.", Log::Warning);
 	}
 }

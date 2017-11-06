@@ -30,7 +30,8 @@ core::String read_text_file(const core::String &file_name) {
 	core::Vector<u8> buffer;
 	reader.read_all(buffer);
 
-	auto str = core::String::from_owned(reinterpret_cast<char*>(buffer.begin()));
+	/*auto str = core::String::from_owned(reinterpret_cast<char*>(buffer.begin()));
 	do_not_destroy(std::move(buffer));
-	return str;
+	return str;*/
+	return core::String(reinterpret_cast<const char*>(buffer.begin()), buffer.size());
 }
